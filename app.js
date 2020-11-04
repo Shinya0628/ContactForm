@@ -41,7 +41,6 @@ app.post("/send", (req, res) => {
     service: "gmail",
     host: "smtp.gmail.com",
     port: 587,
-    // secure: false, // true for 465, false for other ports
     auth: {
       user: "k.shinya.ipad.777@gmail.com", // generated ethereal user
       pass: process.env.PASSWORD, // generated ethereal password
@@ -70,5 +69,5 @@ app.post("/send", (req, res) => {
     res.render("contact", { msg: "Email has been sent" });
   });
 });
-
-app.listen(3000, () => console.log("Server started..."));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server started..."));
