@@ -5,6 +5,21 @@ const exphbs = require("express-handlebars");
 const path = require("path");
 const nodemailer = require("nodemailer");
 
+// google
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
+const oauth2Client = new OAuth2(
+  process.env.CLIENT_ID, // ClientID
+  process.env.CLIENT_SECLET, // Client Secret
+  "https://developers.google.com/oauthplayground" // Redirect URL
+);
+
+oauth2Client.setCredentials({
+  refresh_token: process.env.REFRESH_TOKEN,
+});
+const accessToken = oauth2Client.getAccessToken();
+
 const app = express();
 
 // View engine setup
@@ -42,8 +57,13 @@ app.post("/send", (req, res) => {
     host: "smtp.gmail.com",
     port: 587,
     auth: {
+      type: "OAuth2",
       user: "k.shinya.ipad.777@gmail.com", // generated ethereal user
-      pass: process.env.PASSWORD, // generated ethereal password
+      // pass: process.env.PASSWORD, // generated ethereal password
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECLET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: accessToken,
     },
     tls: {
       rejectUnauthorized: false,
@@ -69,5 +89,6 @@ app.post("/send", (req, res) => {
     res.render("contact", { msg: "Email has been sent" });
   });
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server started..."));
